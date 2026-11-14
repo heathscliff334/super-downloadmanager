@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Super Download Manager
+GenericName=Download Manager
+Comment=Download files over HTTP and HTTPS
+Exec=super-download-manager
+Icon=super-download-manager
+Terminal=false
+Categories=Network;FileTransfer;
+Keywords=download;http;https;transfer;
+StartupWMClass=Download Manager

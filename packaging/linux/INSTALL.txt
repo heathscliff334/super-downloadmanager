@@ -1,0 +1,35 @@
+Super Download Manager - Linux x86_64
+=====================================
+
+Install (per user, no root):
+    tar xzf super-download-manager-*-linux-x86_64.tar.gz
+    cd super-download-manager-*-linux-x86_64
+    ./install.sh                 # installs under ~/.local
+    ./install.sh --prefix /usr/local   # system-wide (run with sudo)
+
+Run without installing:
+    ./bin/super-download-manager
+
+Uninstall:
+    ./uninstall.sh [--prefix DIR]   (removes only the files install.sh added)
+
+Requirements
+- 64-bit Linux (x86_64) with glibc 2.35 or newer (Ubuntu 22.04+, Debian 12+,
+  Fedora 36+ or equivalent).
+- A desktop session: Wayland or X11.
+- Graphics: the UI renders with wgpu, which needs a Vulkan driver
+  (Debian/Ubuntu: mesa-vulkan-drivers, or your GPU vendor's driver; Fedora:
+  mesa-vulkan-drivers) or, failing that, OpenGL via Mesa.
+- Runtime libraries loaded dynamically: libxkbcommon, libwayland-client (Wayland)
+  or libxcb/libX11 (X11). Desktop installs normally have these already.
+  Debian/Ubuntu: sudo apt install libxkbcommon0 libwayland-client0 libx11-6 libxcb1 mesa-vulkan-drivers
+
+Notes
+- The binary is unsigned and not distributed through a package manager. Verify the
+  .sha256 file published next to the tarball before installing:
+      sha256sum -c super-download-manager-*-linux-x86_64.tar.gz.sha256
+- Downloads default to your Downloads folder; the queue is kept in memory only.
+- If the window is blank or the app exits at start, a missing Vulkan/GL driver is
+  the usual cause. Try WGPU_BACKEND=gl ./bin/super-download-manager
+- Under Wayland the launcher icon may not be matched to the running window
+  (the app does not set a Wayland app id); it still starts normally.

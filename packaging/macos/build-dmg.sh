@@ -13,5 +13,31 @@ app="$stage/Super Download Manager.app"
 mkdir -p "$app/Contents/MacOS" "$output"
 cp "$binary" "$app/Contents/MacOS/SuperDownloadManager"
 cp "$root/packaging/macos/Info.plist" "$app/Contents/Info.plist"
+# A linker-signed Mach-O is not a valid signature for a complete app bundle.
+# Seal the bundle after all its contents have been copied.
+identity="${MACOS_SIGNING_IDENTITY:--}"
+profile="${MACOS_NOTARY_PROFILE:-}"
+if [[ -n "$profile" && "$identity" == "-" ]]; then
+  echo "error: notarization requires MACOS_SIGNING_IDENTITY (Developer ID Application)" >&2
+  exit 1
+fi
+if [[ "$identity" == "-" ]]; then
+  codesign --force --sign - "$app"
+else
+  codesign --force --sign "$identity" --options runtime --timestamp "$app"
+fi
+codesign --verify --deep --strict --verbose=2 "$app"
 ln -s /Applications "$stage/Applications"
-hdiutil create -quiet -volname "Super Download Manager" -srcfolder "$stage" -ov -format UDZO "$output/Super-Download-Manager-macOS-arm64.dmg"
+dmg="$output/Super-Download-Manager-macOS-arm64.dmg"
+hdiutil create -quiet -volname "Super Download Manager" -srcfolder "$stage" -ov -format UDZO "$dmg"
+if [[ "$identity" != "-" ]]; then
+  codesign --force --sign "$identity" --timestamp "$dmg"
+  codesign --verify --verbose=2 "$dmg"
+fi
+if [[ -n "$profile" ]]; then
+  xcrun notarytool submit "$dmg" --keychain-profile "$profile" --wait
+  xcrun stapler staple "$dmg"
+  xcrun stapler validate "$dmg"
+else
+  echo "Note: this disk image is not notarized and Gatekeeper may block it." >&2
+fi

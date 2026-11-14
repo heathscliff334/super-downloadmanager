@@ -18,9 +18,9 @@ Requirements
   Fedora 36+ or equivalent).
 - A desktop session: Wayland or X11.
 - Graphics: the Linux UI uses OpenGL. Install Mesa or a compatible GPU driver.
-- Runtime libraries loaded dynamically: libxkbcommon, libwayland-client (Wayland)
-  or libxcb/libX11 (X11). Desktop installs normally have these already.
-  Debian/Ubuntu: sudo apt install libxkbcommon0 libwayland-client0 libx11-6 libxcb1 libgl1-mesa-dri libegl1
+- Runtime libraries loaded dynamically: libxkbcommon and libwayland-client (Wayland)
+  or libxkbcommon-x11, libxcb and libX11 (X11). Desktop installs normally have these already.
+  Debian/Ubuntu: sudo apt install libxkbcommon0 libxkbcommon-x11-0 libwayland-client0 libx11-6 libxcb1 libgl1-mesa-dri libegl1
 
 Notes
 - The binary is unsigned and not distributed through a package manager. Verify the
@@ -29,5 +29,3 @@ Notes
 - Downloads default to your Downloads folder; the queue is kept in memory only.
 - If the window is blank or the app exits at start, check that your OpenGL
   drivers and desktop session are working.
-- Under Wayland the launcher icon may not be matched to the running window
-  (the app does not set a Wayland app id); it still starts normally.

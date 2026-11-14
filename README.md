@@ -1,6 +1,6 @@
 # Super Download Manager
 
-A native Rust desktop download manager built with egui and Tokio. The current MVP downloads HTTP and HTTPS files, shows transfer progress, queues up to three simultaneous transfers, retries failed transfers, and removes jobs from the list (cancelling active jobs). Completed files are never overwritten.
+A native Rust desktop download manager for Windows, macOS, and Linux, built with egui and Tokio. The current MVP downloads HTTP and HTTPS files, shows transfer progress, queues up to three simultaneous transfers, retries failed transfers, and removes jobs from the list (cancelling active jobs). Completed files are never overwritten.
 
 ## Download
 
@@ -20,6 +20,17 @@ cargo run --release --manifest-path frontend/Cargo.toml
 ```
 
 Choose **Add URL**, paste one or more links, and enter an existing destination folder. Files use a name derived from the URL. The application keeps its queue in memory; closing it cancels active downloads. Pause/resume, transfer limits, persistent history, segmented downloads, browser integration, and FTP are not yet implemented.
+
+## Linux x86-64
+
+Build and package on Linux x86-64 (Ubuntu 22.04 or a compatible system):
+
+```sh
+cargo build --release --locked --manifest-path frontend/Cargo.toml
+sh packaging/linux/build-tarball.sh
+```
+
+The archive is written to `packaging/linux/output/`. Extract it and run `./install.sh` for a per-user installation, or run `./bin/super-download-manager` directly. See [Linux installation notes](packaging/linux/INSTALL.txt) for dependencies and uninstall instructions. A Linux release download is not yet published.
 
 ## Development
 

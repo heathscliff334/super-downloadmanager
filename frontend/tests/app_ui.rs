@@ -46,6 +46,20 @@ fn add_links_is_all_or_nothing() {
     assert_eq!(app.snapshot[0].save_dir.to_str(), Some("/tmp/dl"), "empty dir falls back to default");
 }
 
+#[cfg(unix)]
+#[test]
+fn displayed_default_directory_preserves_non_utf8_and_spaces() {
+    use std::ffi::OsString;
+    use std::os::unix::ffi::OsStringExt;
+    use std::path::PathBuf;
+
+    let default_dir = PathBuf::from(OsString::from_vec(b"/tmp/downloads-\xff ".to_vec()));
+    let ctx = egui::Context::default();
+    let mut app = DownloadApp::new(&ctx, Box::new(SimulatedEngine::new()), default_dir.clone());
+    app.add_links("https://example.com/file", &default_dir.to_string_lossy()).unwrap();
+    assert_eq!(app.snapshot[0].save_dir, default_dir);
+}
+
 #[test]
 fn commands_update_state_and_prune_selection() {
     let ctx = egui::Context::default();

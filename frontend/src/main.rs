@@ -6,6 +6,9 @@ fn main() -> eframe::Result {
     let dir = DownloadApp::default_save_dir();
     let engine = Box::new(RealEngine::new().expect("could not initialize download engine"));
     let options = eframe::NativeOptions {
+        // OpenGL works on Linux systems without a Vulkan-capable GPU or driver.
+        #[cfg(target_os = "linux")]
+        renderer: eframe::Renderer::Glow,
         viewport: egui::ViewportBuilder::default()
             .with_title("Download Manager")
             .with_inner_size([1120.0, 720.0])

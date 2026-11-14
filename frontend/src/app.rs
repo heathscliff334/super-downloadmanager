@@ -87,9 +87,40 @@ pub struct DownloadApp {
     default_dir: PathBuf,
 }
 
+#[cfg(any(target_os = "linux", test))]
+fn existing_save_dir(download_dir: Option<PathBuf>, home_dir: Option<PathBuf>) -> PathBuf {
+    [download_dir, home_dir]
+        .into_iter()
+        .flatten()
+        .find(|dir| dir.is_dir())
+        .unwrap_or_else(|| PathBuf::from("."))
+}
+
+#[cfg(test)]
+mod directory_tests {
+    use super::existing_save_dir;
+    use std::path::PathBuf;
+
+    #[test]
+    fn uses_existing_download_dir_then_home_then_current_dir() {
+        let home = std::env::temp_dir();
+        let missing = home.join(format!("missing-download-dir-{}", std::process::id()));
+        assert_eq!(existing_save_dir(Some(home.clone()), None), home);
+        assert_eq!(existing_save_dir(Some(missing), Some(home.clone())), home);
+        assert_eq!(existing_save_dir(None, None), PathBuf::from("."));
+    }
+}
+
 impl DownloadApp {
     pub fn default_save_dir() -> PathBuf {
-        dirs::download_dir().or_else(dirs::home_dir).unwrap_or_else(|| PathBuf::from("."))
+        #[cfg(target_os = "linux")]
+        {
+            existing_save_dir(dirs::download_dir(), dirs::home_dir())
+        }
+        #[cfg(not(target_os = "linux"))]
+        {
+            dirs::download_dir().or_else(dirs::home_dir).unwrap_or_else(|| PathBuf::from("."))
+        }
     }
 
     pub fn new(ctx: &egui::Context, engine: Box<dyn DownloadEngine>, default_dir: PathBuf) -> Self {
@@ -138,7 +169,7 @@ impl DownloadApp {
         if let Some(bad) = urls.iter().find(|u| validate_url(u).is_err()) {
             return Err(format!("Not a valid link: {bad}"));
         }
-        let save_dir = if dir.trim().is_empty() {
+        let save_dir = if dir.trim().is_empty() || dir == self.default_dir.to_string_lossy() {
             self.default_dir.clone()
         } else {
             PathBuf::from(dir.trim())

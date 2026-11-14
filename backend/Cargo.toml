@@ -1,0 +1,17 @@
+[package]
+name = "download-manager"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Async HTTP download engine for desktop applications"
+
+[dependencies]
+futures-util = "0.3"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "stream"] }
+tempfile = "3"
+tokio = { version = "1", features = ["fs", "io-util", "rt", "sync", "macros"] }
+tokio-util = { version = "0.7", features = ["rt"] }
+url = "2"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "net", "rt-multi-thread", "time", "io-util"] }

@@ -23,6 +23,46 @@ cargo run --release --manifest-path frontend/Cargo.toml
 
 Choose **Add URL**, paste one or more links, and enter an existing destination folder. Files use a name derived from the URL. The application keeps its queue in memory; closing it cancels active downloads. Pause/resume, transfer limits, persistent history, segmented downloads, browser integration, and FTP are not yet implemented.
 
+## Build and run locally on macOS
+
+1. Install the Xcode Command Line Tools if they are not already installed:
+
+   ```sh
+   xcode-select --install
+   ```
+
+2. Install a current Rust toolchain using [rustup](https://rustup.rs/), then open a new Terminal window so `cargo` is on your `PATH`.
+
+3. Clone the repository and enter the project directory:
+
+   ```sh
+   git clone https://github.com/heathscliff334/super-downloadmanager.git
+   cd super-downloadmanager
+   ```
+
+4. Run the app in development mode:
+
+   ```sh
+   cargo run --locked --manifest-path frontend/Cargo.toml
+   ```
+
+   For an optimized build, run:
+
+   ```sh
+   cargo build --locked --release --manifest-path frontend/Cargo.toml
+   ./frontend/target/release/download-manager-ui
+   ```
+
+   The standalone executable is created at `frontend/target/release/download-manager-ui`.
+
+5. On an Apple Silicon Mac, optionally package the release build as a DMG:
+
+   ```sh
+   packaging/macos/build-dmg.sh
+   ```
+
+   The disk image is written to `packaging/macos/output/Super-Download-Manager-macOS-arm64.dmg`. By default, it is ad-hoc signed for local testing and is not notarized; macOS may block it when downloaded or shared. See [macOS signing and notarization](#macos-signing-and-notarization) for a distributable build.
+
 ## Linux x86-64
 
 Build and package on Linux x86-64 (Ubuntu 22.04 or a compatible system):
